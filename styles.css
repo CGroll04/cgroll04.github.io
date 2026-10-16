@@ -134,6 +134,23 @@ body::before{opacity:.035}
 .album-homage .album-photograph{height:100%;object-fit:cover}
 .album-homage::before{background:none}
 .album-homage .album-type,.detail-art .album-homage .album-type{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;top:0;left:0;right:auto;bottom:auto}
+/* Coursework stays visible without an extra click, with an optional compact view. */
+.learning-details{margin-top:30px;padding:23px 25px;background:#faf6eb;border:1px solid #b4c6c9;border-left:3px solid var(--orange);box-shadow:3px 3px 0 #bdd0d84d}
+.learning-details summary{display:flex;justify-content:space-between;align-items:center;gap:20px;width:100%;padding:0;list-style:none}
+.learning-details summary::-webkit-details-marker{display:none}
+.learning-summary{display:grid;gap:6px}
+.learning-title{font-size:18px;line-height:1.4;font-weight:500;color:var(--ink)}
+.learning-preview{font-size:14px;line-height:1.6;color:var(--muted)}
+.learning-control{display:flex;align-items:center;gap:10px;flex-shrink:0;font-size:13px;color:var(--ink)}
+.learning-indicator{display:grid;place-items:center;width:30px;height:30px;border:1px solid #93a9af;border-radius:50%;font-size:21px;line-height:1}
+.learning-indicator::before{content:'+'}
+.learning-hide,.learning-details[open] .learning-show{display:none}
+.learning-details[open] .learning-hide{display:inline}
+.learning-details[open] .learning-indicator::before{content:'−'}
+.learning-details .learning-grid{border-top:1px solid #ccd5cf;padding-top:21px;margin-top:21px}
+.learning-details .learning-grid h3{font-size:15px;font-weight:500}
+.learning-details summary:hover .learning-title{color:var(--orange)}
+@media(max-width:600px){.learning-details{padding:20px 18px}.learning-details summary{align-items:start;gap:12px}.learning-details[open] .learning-control>.learning-hide,.learning-control>.learning-show{display:none}.learning-title{font-size:18px}.learning-preview{font-size:14px}.learning-indicator{width:28px;height:28px}}
 /* A quiet track list makes the collection browsable without rushing the introduction. */
 .recruiter-shortcut{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 7px;width:fit-content;margin-top:26px;padding:4px 0 4px 13px;border-left:2px solid var(--orange);font:14px/1.6 var(--sans);color:var(--muted)}
 .recruiter-shortcut>span:first-child{font-weight:600;color:var(--ink)}
