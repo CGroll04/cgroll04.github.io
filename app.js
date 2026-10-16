@@ -92,3 +92,64 @@ function openFromHash() {
 window.addEventListener('hashchange', openFromHash);
 document.querySelector('#year').textContent = new Date().getFullYear();
 openFromHash();
+
+// Native anchors still work without JavaScript; enhancement adds a compact menu and location cue.
+const sectionNav = document.querySelector('.section-nav');
+const sectionToggle = document.querySelector('.section-menu-toggle');
+const sectionLinks = [...sectionNav.querySelectorAll('.section-links a')];
+const pageSections = sectionLinks.map(link => document.querySelector(link.getAttribute('href')));
+const compactNavigation = window.matchMedia('(max-width: 1199px)');
+document.documentElement.classList.add('navigation-ready');
+
+function closeSectionMenu(restoreFocus = false) {
+  sectionNav.classList.remove('menu-open');
+  sectionToggle.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) sectionToggle.focus({preventScroll: true});
+}
+
+sectionToggle.addEventListener('click', () => {
+  const expanded = sectionNav.classList.toggle('menu-open');
+  sectionToggle.setAttribute('aria-expanded', String(expanded));
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && sectionNav.classList.contains('menu-open')) closeSectionMenu(true);
+});
+document.addEventListener('pointerdown', event => {
+  if (!sectionNav.contains(event.target)) closeSectionMenu();
+});
+compactNavigation.addEventListener('change', () => closeSectionMenu());
+
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', () => {
+    const target = document.getElementById(link.getAttribute('href').slice(1));
+    if (!target) return;
+    closeSectionMenu();
+    // Move keyboard focus to the destination without overriding the browser's anchor scrolling.
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({preventScroll: true});
+  });
+});
+
+let navigationFrame = null;
+function updateSectionLocation() {
+  navigationFrame = null;
+  const readingLine = Math.min(innerHeight * .3, 230);
+  let current = 0;
+  pageSections.forEach((section, index) => {
+    if (section.getBoundingClientRect().top <= readingLine) current = index;
+  });
+  if (scrollY + innerHeight >= document.documentElement.scrollHeight - 3) current = pageSections.length - 1;
+  sectionLinks.forEach((link, index) => {
+    if (index === current) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+  sectionNav.querySelector('.menu-current').textContent = sectionLinks[current].children[1].textContent;
+}
+function queueSectionLocation() {
+  if (navigationFrame === null) navigationFrame = requestAnimationFrame(updateSectionLocation);
+}
+window.addEventListener('scroll', queueSectionLocation, {passive: true});
+window.addEventListener('resize', queueSectionLocation);
+window.addEventListener('load', queueSectionLocation);
+new ResizeObserver(queueSectionLocation).observe(document.querySelector('main'));
+updateSectionLocation();
